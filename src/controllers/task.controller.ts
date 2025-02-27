@@ -80,7 +80,7 @@ export const updateTask = async (req: Request, res: Response) => {
     const updatedTaskData: Partial<ITask> = req.body;
 
     const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, emailId: req.user.emailId },
+      { _id: taskId, userId: req.user.id },
       updatedTaskData,
       { new: true, runValidators: true }
     );
@@ -107,7 +107,7 @@ export const deleteTask = async (req: Request, res: Response) => {
 
     const deletedTask = await Task.findOneAndDelete({
       _id: taskId,
-      emailId: req.user.emailId,
+      userId: req.user.id,
     });
 
     if (!deletedTask) {
