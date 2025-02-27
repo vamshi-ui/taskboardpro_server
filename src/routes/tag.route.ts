@@ -1,11 +1,7 @@
 import express from "express";
 import { body, param } from "express-validator";
 import { validateBody } from "../utilities/validateBody";
-import { insertTag } from "../controllers/tag.controller";
-import {
-  deleteCategory,
-  updateCategory,
-} from "../controllers/category.controller";
+import { deleteTag, insertTag, updateTag } from "../controllers/tag.controller";
 
 const router = express.Router();
 
@@ -22,13 +18,13 @@ router.post(
 router.put(
   "/update/:tagId",
   [param("tagId").notEmpty().withMessage("tagId is required"), validateBody],
-  updateCategory
+  updateTag
 );
 
 router.delete(
   "/delete/:tagId",
   [param("tagId").notEmpty().withMessage("tagId is required"), validateBody],
-  deleteCategory
+  deleteTag
 );
 
 export default router;

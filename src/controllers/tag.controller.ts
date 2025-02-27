@@ -33,7 +33,8 @@ export const updateTag = async (req: Request, res: Response) => {
       );
   
       if (!updatedTag) {
-        return res.status(404).json({ message: "Tag not found" });
+         res.status(404).json({ message: "Tag not found" });
+         return
       }
   
       res.status(200).json({
@@ -53,7 +54,8 @@ export const updateTag = async (req: Request, res: Response) => {
       const deletedTag = await Tag.findByIdAndDelete(tagId);
   
       if (!deletedTag) {
-        return res.status(404).json({ message: "Tag not found" });
+         res.status(404).json({ message: "Tag not found" });
+         return
       }
   
       res.status(200).json({ message: "Tag deleted successfully" });

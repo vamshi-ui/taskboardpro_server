@@ -86,7 +86,8 @@ export const updateTask = async (req: Request, res: Response) => {
     );
 
     if (!updatedTask) {
-      return res.status(404).json({ message: "Task not found" });
+       res.status(404).json({ message: "Task not found" });
+       return
     }
 
     res.status(200).json({
@@ -111,7 +112,8 @@ export const deleteTask = async (req: Request, res: Response) => {
     });
 
     if (!deletedTask) {
-      return res.status(404).json({ message: "Task not found" });
+       res.status(404).json({ message: "Task not found" });
+       return
     }
 
     res.status(200).json({

@@ -2,9 +2,11 @@ import express from "express";
 import { body, param } from "express-validator";
 import { validateBody } from "../utilities/validateBody";
 import {
+  deleteTask,
   getAllTasks,
   getTaskDetails,
   insertTask,
+  updateTask,
 } from "../controllers/task.controller";
 import { authorize } from "../middlewares/auth";
 
@@ -40,6 +42,49 @@ router.get(
     authorize(["admin", "user"]),
   ],
   getTaskDetails
+);
+
+router.put(
+  "/update/:taskId",
+  [
+    param("taskId").notEmpty().withMessage("taskId is required"),
+    body("taskName")
+      .optional()
+      .isString()
+      .withMessage("taskName should be a string value"),
+    body("dueDate")
+      .optional()
+      .isString()
+      .withMessage("dueDate should be a valid date"),
+    body("priority")
+      .optional()
+      .isIn(["high", "medium", "low"])
+      .withMessage("priority should be one of 'high', 'medium', or 'low'"),
+    body("status")
+      .optional()
+      .isIn(["pending", "in-progress", "completed"])
+      .withMessage(
+        "status should be one of 'pending', 'in-progress', or 'completed'"
+      ),
+    body("category")
+      .optional()
+      .isMongoId()
+      .withMessage("category should be a valid MongoDB ObjectId"),
+    body("tags")
+      .optional()
+      .isArray()
+      .withMessage("tags should be an array of tag IDs")
+      .custom((tags) => tags.every((tag: any) => /^[0-9a-fA-F]{24}$/.test(tag)))
+      .withMessage("Each tag should be a valid MongoDB ObjectId"),
+    validateBody,
+  ],
+  updateTask
+);
+
+router.delete(
+  "/delete/:tagId",
+  [param("taskId").notEmpty().withMessage("taskId is required"), validateBody],
+  deleteTask
 );
 
 export default router;
