@@ -21,7 +21,7 @@ export const insertTask = async (req: Request, res: Response) => {
       category,
       tags,
       description,
-      emailId: req.user.emailId,
+      userId: req.user.id,
     });
 
     const newTask = await task.save();
@@ -40,9 +40,10 @@ export const insertTask = async (req: Request, res: Response) => {
 
 export const getAllTasks = async (req: Request, res: Response) => {
   try {
-    const taskList = await Task.find({ emailId: req.user.emailId }).populate([
+    const taskList = await Task.find({ userId: req.user.id }).populate([
       "category",
       "tags",
+      "userId",
     ]);
     res.status(200).send({
       result: taskList,
@@ -60,6 +61,7 @@ export const getTaskDetails = async (req: Request, res: Response) => {
     const taskDetails = await Task.findById(req.params.taskId).populate([
       "category",
       "tags",
+      "userId",
     ]);
     res.status(taskDetails ? 200 : 204).send({
       result: taskDetails || {},

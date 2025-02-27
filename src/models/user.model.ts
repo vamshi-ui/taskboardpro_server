@@ -57,7 +57,6 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters"],
-      select: false,
     },
     role: {
       type: String,
@@ -75,21 +74,10 @@ const userSchema: Schema<IUser> = new Schema(
   }
 );
 
-// Password hashing middleware
-userSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error: any) {
-    next(error);
-  }
-});
-
 // Password validation method
 userSchema.methods.validatePassword = async function (password: string) {
+  console.log(password, this.password);
+  
   return bcrypt.compare(password, this.password);
 };
 
@@ -98,11 +86,10 @@ userSchema.methods.generateJWT = function () {
   return jwt.sign(
     {
       id: this._id,
-      email: this.emailId,
+      emailId: this.emailId,
       role: this.role,
     },
     process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRATION_TIME }
   );
 };
 

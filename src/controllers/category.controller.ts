@@ -16,7 +16,7 @@ export const insertCategory = async (req: Request, res: Response) => {
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({
-      message: "internal server error",
+      message: err.message || "internal server error",
     });
   }
 };
@@ -43,7 +43,7 @@ export const updateCategory = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.log(err.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: err.message || "internal server error" });
   }
 };
 
@@ -60,6 +60,6 @@ export const deleteCategory = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (err: any) {
     console.log(err.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: err.message || "internal server error" });
   }
 };

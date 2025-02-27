@@ -41,7 +41,9 @@ export const authorize = (allowedUserRoles: string[]) => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.message);
+      
       res.status(403).json({ message: "Invalid token" });
       return;
     }

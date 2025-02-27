@@ -9,7 +9,6 @@ export const insertUser = async (req: Request, res: Response) => {
     lastName,
     mobileNumber,
     password,
-    address,
     role,
     emailId,
   } = req.body;
@@ -64,24 +63,16 @@ export const login = async (req: Request, res: Response) => {
     res.cookie("auth-key", token, {
       expires: new Date(Date.now() + 100000 * 60),
     });
-    res.status(200).json({ message: "login sucsess", result: null });
-  } catch (err: any) {
-    res.status(400).json({ message: err.message, result: null });
-  }
-};
 
-export const getUser = async (req: Request, res: Response) => {
-  try {
     const userData = {
-      firstName: req.user?.firstName,
-      lastName: req.user?.lastName,
-      mobileNumber: req.user?.mobileNumber,
-      emailId: req.user?.emailId,
-      address: req.user?.address,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      mobileNumber: user?.mobileNumber,
+      emailId: user?.emailId,
     };
     res
       .status(200)
-      .json({ message: "user data fetched sucssesfully", userData });
+      .json({ message: "login sucsess", userData });
   } catch (err: any) {
     res.status(400).json({ message: err.message, result: null });
   }

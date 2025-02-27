@@ -16,7 +16,7 @@ export const insertTag = async (req: Request, res: Response) => {
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({
-      message: "Internal server error",
+      message: err.message || "internal server error"
     });
   }
 };
@@ -42,7 +42,7 @@ export const updateTag = async (req: Request, res: Response) => {
       });
     } catch (err: any) {
       console.log(err.message);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: err.message || "internal server error" });
     }
   };
   
@@ -59,7 +59,7 @@ export const updateTag = async (req: Request, res: Response) => {
       res.status(200).json({ message: "Tag deleted successfully" });
     } catch (err: any) {
       console.log(err.message);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: err.message || "internal server error" });
     }
   };
   
