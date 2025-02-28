@@ -21,7 +21,6 @@ export const insertCategory = async (req: Request, res: Response) => {
   }
 };
 
-
 export const updateCategory = async (req: Request, res: Response) => {
   try {
     const { categoryId } = req.params;
@@ -34,8 +33,8 @@ export const updateCategory = async (req: Request, res: Response) => {
     );
 
     if (!updatedCategory) {
-       res.status(404).json({ message: "Category not found" });
-       return
+      res.status(404).json({ message: "Category not found" });
+      return;
     }
 
     res.status(200).json({
@@ -55,11 +54,24 @@ export const deleteCategory = async (req: Request, res: Response) => {
     const deletedCategory = await Category.findByIdAndDelete(categoryId);
 
     if (!deletedCategory) {
-       res.status(404).json({ message: "Category not found" });
-       return
+      res.status(404).json({ message: "Category not found" });
+      return;
     }
 
     res.status(200).json({ message: "Category deleted successfully" });
+  } catch (err: any) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message || "internal server error" });
+  }
+};
+
+export const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const categoryList = await Category.find({});
+    res.status(200).json({
+      message: "success",
+      result: categoryList,
+    });
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({ message: err.message || "internal server error" });

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   deleteCategory,
+  getAllCategories,
   insertCategory,
   updateCategory,
 } from "../controllers/category.controller";
@@ -35,6 +36,11 @@ router.delete(
     validateBody,
   ],
   deleteCategory
+);
+
+router.get(
+  "/get-all-tags",
+  getAllCategories
 );
 
 export default router;

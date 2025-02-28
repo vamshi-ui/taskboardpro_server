@@ -1,7 +1,7 @@
 import express from "express";
 import { body, param } from "express-validator";
 import { validateBody } from "../utilities/validateBody";
-import { deleteTag, insertTag, updateTag } from "../controllers/tag.controller";
+import { deleteTag, getAllTags, insertTag, updateTag } from "../controllers/tag.controller";
 
 const router = express.Router();
 
@@ -25,6 +25,11 @@ router.delete(
   "/delete/:tagId",
   [param("tagId").notEmpty().withMessage("tagId is required"), validateBody],
   deleteTag
+);
+
+router.get(
+  "/get-all-tags",
+  getAllTags
 );
 
 export default router;

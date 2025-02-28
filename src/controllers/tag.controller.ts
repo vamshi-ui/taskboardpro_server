@@ -65,3 +65,16 @@ export const updateTag = async (req: Request, res: Response) => {
     }
   };
   
+  export const getAllTags = async (req: Request, res: Response) => {
+    try {
+      const TagList = await Tag.find({});
+      res.status(200).json({
+        message: "success",
+        result: TagList,
+      });
+    } catch (err: any) {
+      console.log(err.message);
+      res.status(500).json({ message: err.message || "internal server error" });
+    }
+  };
+  

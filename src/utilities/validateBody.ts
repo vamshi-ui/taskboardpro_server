@@ -11,6 +11,6 @@ export const validateBody = (
   if (errors.isEmpty()) {
     next();
   } else {
-    res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ errors: errors.array(),     message:  "Bad Request!!", });
   }
 };
