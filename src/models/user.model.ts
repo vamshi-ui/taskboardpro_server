@@ -76,8 +76,6 @@ const userSchema: Schema<IUser> = new Schema(
 
 // Password validation method
 userSchema.methods.validatePassword = async function (password: string) {
-  console.log(password, this.password);
-  
   return bcrypt.compare(password, this.password);
 };
 
