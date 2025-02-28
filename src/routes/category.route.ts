@@ -39,7 +39,7 @@ router.delete(
 );
 
 router.get(
-  "/get-all-tags",
+  "/get-all-categories",
   getAllCategories
 );
 

@@ -7,7 +7,13 @@ import taskRoute from "./routes/task.route";
 import { userRoute } from "./routes/usermanagement.route";
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 app.use(express.json());
 app.use(cokkieparser());
 app.use("/api/category", categoryRote);
