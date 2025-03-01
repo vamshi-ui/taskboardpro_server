@@ -4,6 +4,7 @@ import { validateBody } from "../utilities/validateBody";
 import {
   deleteTask,
   getAllTasks,
+  getRecentTasks,
   getTaskDetails,
   insertTask,
   updateTask,
@@ -86,5 +87,7 @@ router.delete(
   [param("taskId").notEmpty().withMessage("taskId is required"), validateBody],
   deleteTask
 );
+
+router.get('/get-recent-tasks',authorize(['admin','user']),getRecentTasks)
 
 export default router;

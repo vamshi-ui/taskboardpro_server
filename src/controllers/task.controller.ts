@@ -86,8 +86,8 @@ export const updateTask = async (req: Request, res: Response) => {
     );
 
     if (!updatedTask) {
-       res.status(404).json({ message: "Task not found" });
-       return
+      res.status(404).json({ message: "Task not found" });
+      return;
     }
 
     res.status(200).json({
@@ -112,8 +112,8 @@ export const deleteTask = async (req: Request, res: Response) => {
     });
 
     if (!deletedTask) {
-       res.status(404).json({ message: "Task not found" });
-       return
+      res.status(404).json({ message: "Task not found" });
+      return;
     }
 
     res.status(200).json({
@@ -124,6 +124,59 @@ export const deleteTask = async (req: Request, res: Response) => {
     console.log(err.message);
     res.status(500).json({
       message: err.message || "Internal server error",
+    });
+  }
+};
+
+interface QueryParams {
+  status?: string;
+  month?: number; 
+  limit?: number;
+}
+
+interface TaskQuery {
+  userId: string;
+  status?: string;
+  createdAt?: { $gte?: Date; $lt?: Date };
+}
+
+export const getRecentTasks = async (req: Request, res: Response) => {
+  try {
+
+    
+    const { status, month, limit = 5 } = req.query as QueryParams;
+    
+    let query: TaskQuery = { userId: req.user.id };
+    
+    if (status) {
+      query.status = status;
+    }
+    
+    if (month) {
+      const year = new Date().getFullYear(); 
+      const startDate = new Date(year, month - 1, 1); 
+      const endDate = new Date(year, month, 1); 
+    
+      query.createdAt = {
+        $gte: startDate, 
+        $lt: endDate, 
+      };
+    }
+    
+    const taskLimit = Math.max(1, +limit || 5); 
+    
+    const recentTasks = await Task.find(query)
+      .limit(taskLimit)
+      .sort({ updatedAt: -1 });
+
+    res.status(200).json({
+      message: "success",
+      resilt: recentTasks,
+    });
+  } catch (err: any) {
+    console.log(err.message);
+    res.status(500).json({
+      message: err.message,
     });
   }
 };

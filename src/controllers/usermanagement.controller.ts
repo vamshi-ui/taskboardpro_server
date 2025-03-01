@@ -5,9 +5,7 @@ import validator from "validator";
 
 export const insertUser = async (req: Request, res: Response) => {
   const {
-    firstName,
-    lastName,
-    mobileNumber,
+    userName,
     password,
     role,
     emailId,
@@ -19,9 +17,7 @@ export const insertUser = async (req: Request, res: Response) => {
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
-      firstName,
-      lastName,
-      mobileNumber,
+      userName,
       password: hashPassword,
       role,
       emailId,
@@ -40,17 +36,18 @@ export const insertUser = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { emailId, password } = req.body;
-
-  if (validator.isEmpty(emailId) || validator.isEmpty(password)) {
-    throw new Error("Please provide both username and password");
-  }
-
+  
   try {
+    const { emailId, password } = req.body;
+    console.log(req.body);
+    
+    if (validator.isEmpty(emailId) || validator.isEmpty(password)) {
+      throw new Error("Please provide both username and password");
+    }
     const user: IUser = (await User.findOne({ emailId })) as IUser;
 
     if (!user) {
-      throw new Error("you are not authorized user to login");
+      throw new Error("you are not authorized user to login, please signup & try again");
     }
 
     const isMatch = await user.validatePassword(password);
@@ -65,9 +62,7 @@ export const login = async (req: Request, res: Response) => {
     });
 
     const userData = {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      mobileNumber: user?.mobileNumber,
+      userName: user?.userName,
       emailId: user?.emailId,
     };
     res
