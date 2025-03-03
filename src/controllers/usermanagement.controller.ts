@@ -44,7 +44,7 @@ export const login = async (req: Request, res: Response) => {
     if (validator.isEmpty(emailId) || validator.isEmpty(password)) {
       throw new Error("Please provide both username and password");
     }
-    const user: IUser = (await User.findOne({ emailId })) as IUser;
+    const user: any = (await User.findOne({ emailId })) as IUser;
 
     if (!user) {
       throw new Error("you are not authorized user to login, please signup & try again");
@@ -64,6 +64,8 @@ export const login = async (req: Request, res: Response) => {
     const userData = {
       userName: user?.userName,
       emailId: user?.emailId,
+      joinedDate: user?.createdAt,
+      role: user?.role,
     };
     res
       .status(200)

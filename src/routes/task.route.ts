@@ -46,9 +46,9 @@ router.get(
 );
 
 router.put(
-  "/update/:taskId",
+  "/update",
   [
-    param("taskId").notEmpty().withMessage("taskId is required"),
+    body("_id").notEmpty().withMessage("taskId is required"),
     body("taskName")
       .optional()
       .isString()
@@ -78,16 +78,18 @@ router.put(
       .custom((tags) => tags.every((tag: any) => /^[0-9a-fA-F]{24}$/.test(tag)))
       .withMessage("Each tag should be a valid MongoDB ObjectId"),
     validateBody,
+    authorize(["admin", "user"]),
   ],
   updateTask
 );
 
 router.delete(
-  "/delete/:tagId",
+  "/delete/:taskId",
   [param("taskId").notEmpty().withMessage("taskId is required"), validateBody],
+  authorize(["admin", "user"]),
   deleteTask
 );
 
-router.get('/get-recent-tasks',authorize(['admin','user']),getRecentTasks)
+router.post("/get-recent-tasks", authorize(["admin", "user"]), getRecentTasks);
 
 export default router;

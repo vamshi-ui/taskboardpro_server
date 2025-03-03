@@ -76,11 +76,11 @@ export const getTaskDetails = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response) => {
   try {
-    const { taskId } = req.params;
+    const { _id } = req.body;
     const updatedTaskData: Partial<ITask> = req.body;
 
     const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, userId: req.user.id },
+      { _id, userId: req.user.id },
       updatedTaskData,
       { new: true, runValidators: true }
     );
@@ -130,48 +130,69 @@ export const deleteTask = async (req: Request, res: Response) => {
 
 interface QueryParams {
   status?: string;
-  month?: number; 
+  month?: number;
   limit?: number;
-}
-
-interface TaskQuery {
-  userId: string;
-  status?: string;
-  createdAt?: { $gte?: Date; $lt?: Date };
+  year?: number;
+  date?: string;
 }
 
 export const getRecentTasks = async (req: Request, res: Response) => {
   try {
+    const {
+      status,
+      month,
+      limit = 5,
+      year,
+      date,
+      category,
+      priority,
+      search,
+      offset = 0,
+      sortField = "updatedAt",
+      sortOrder = -1,
+    } = req.body;
 
-    
-    const { status, month, limit = 5 } = req.query as QueryParams;
-    
-    let query: TaskQuery = { userId: req.user.id };
-    
-    if (status) {
-      query.status = status;
+    let query: any = { userId: req.user.id };
+
+    if (status) query.status = status;
+    if (category) query.category = category;
+    if (priority) query.priority = priority;
+
+    if (search) {
+      query.$or = [
+        { taskName: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
     }
-    
-    if (month) {
-      const year = new Date().getFullYear(); 
-      const startDate = new Date(year, month - 1, 1); 
-      const endDate = new Date(year, month, 1); 
-    
-      query.createdAt = {
-        $gte: startDate, 
-        $lt: endDate, 
+
+    if (date) {
+      const targetDate = new Date(date);
+      query.dueDate = {
+        $gte: new Date(targetDate.setHours(0, 0, 0, 0)),
+        $lt: new Date(targetDate.setHours(23, 59, 59, 999)),
       };
+    } else if (month != null && year) {
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0);
+      query.dueDate = { $gte: startDate, $lt: endDate };
     }
-    
-    const taskLimit = Math.max(1, +limit || 5); 
-    
+
+    const taskLimit = Math.max(1, +limit || 5);
+
     const recentTasks = await Task.find(query)
-      .limit(taskLimit)
-      .sort({ updatedAt: -1 });
+      .populate(["tags", "userId"])
+      .sort({ [sortField]: sortOrder })
+      .skip(offset)
+      .limit(taskLimit);
+
+    const totalTasks = await Task.countDocuments(query);
 
     res.status(200).json({
       message: "success",
-      resilt: recentTasks,
+      result: recentTasks,
+      totalTasks,
+      totalPages: Math.ceil(totalTasks / taskLimit),
+      offset,
     });
   } catch (err: any) {
     console.log(err.message);

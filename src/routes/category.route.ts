@@ -7,15 +7,17 @@ import {
 } from "../controllers/category.controller";
 import { body, param } from "express-validator";
 import { validateBody } from "../utilities/validateBody";
+import { authorize } from "../middlewares/auth";
 
 const router = express.Router();
 
 router.post(
   "/insert-category",
   [
-    body("categoryName").notEmpty().withMessage("category name is required"),
+    body("name").notEmpty().withMessage("category name is required"),
     body("description").notEmpty().withMessage("description is required"),
     validateBody,
+    authorize(["admin", "user"]),
   ],
   insertCategory
 );
@@ -25,6 +27,7 @@ router.put(
   [
     param("categoryId").notEmpty().withMessage("categoryId is required"),
     validateBody,
+    authorize(["admin", "user"]),
   ],
   updateCategory
 );
@@ -34,13 +37,11 @@ router.delete(
   [
     param("categoryId").notEmpty().withMessage("categoryId is required"),
     validateBody,
+    authorize(["admin", "user"]),
   ],
   deleteCategory
 );
 
-router.get(
-  "/get-all-categories",
-  getAllCategories
-);
+router.post("/get-all-categories",  authorize(["admin", "user"]), getAllCategories);
 
 export default router;

@@ -3,10 +3,13 @@ import { ICategory, Category } from "../models/task.model";
 
 export const insertCategory = async (req: Request, res: Response) => {
   try {
-    const { categoryName, description }: ICategory = req.body;
+    console.log(req.user);
+
+    const { name, description } = req.body;
     const category: ICategory = new Category({
-      categoryName,
+      categoryName: name,
       description,
+      userId: req.user.id,
     });
     const newcategory = await category.save();
     res.status(200).json({
@@ -67,11 +70,28 @@ export const deleteCategory = async (req: Request, res: Response) => {
 
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const categoryList = await Category.find({});
+    const { limit, offset }: any = req.body;
+
+    const query = Category.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .skip(offset ? parseInt(offset) : 0);
+
+    if (limit) {
+      query.limit(parseInt(limit));
+    }
+
+    const [categoryList, totalRecords] = await Promise.all([
+      query,
+      Category.countDocuments({ userId: req.user.id }),
+    ]);
+
     res.status(200).json({
       message: "success",
       result: categoryList,
+      totalRecords,
+      offset: +offset,
     });
+
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({ message: err.message || "internal server error" });
