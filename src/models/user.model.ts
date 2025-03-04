@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import  jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 // Main User Interface and Schema
 export interface IUser extends Document {
@@ -10,6 +10,7 @@ export interface IUser extends Document {
   password: string;
   role: "user" | "admin";
   isActive: boolean;
+  isEmailVerified: boolean;
   validatePassword(value: string): Promise<boolean>;
   generateJWT(): Promise<string>;
 }
@@ -48,6 +49,10 @@ const userSchema: Schema<IUser> = new Schema(
       type: Boolean,
       default: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -67,8 +72,11 @@ userSchema.methods.generateJWT = function () {
       id: this._id,
       emailId: this.emailId,
       role: this.role,
+      userName: this.userName,
+      joinedDate: this.createdAt,
+      isEmailVerified: this.isEmailVerified,
     },
-    process.env.JWT_SECRET!,
+    process.env.JWT_SECRET!
   );
 };
 

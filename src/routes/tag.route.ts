@@ -23,9 +23,9 @@ router.post(
 );
 
 router.put(
-  "/update/:tagId",
+  "/update",
   [
-    param("tagId").notEmpty().withMessage("tagId is required"),
+    body("_id").notEmpty().withMessage("tagId is required"),
     validateBody,
     authorize(["admin", "user"]),
   ],

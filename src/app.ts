@@ -5,7 +5,11 @@ import categoryRote from "./routes/category.route";
 import tagsRoute from "./routes/tag.route";
 import taskRoute from "./routes/task.route";
 import { userRoute } from "./routes/usermanagement.route";
+import path from 'path';
 const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(
   cors({

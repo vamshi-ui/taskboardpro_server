@@ -24,12 +24,12 @@ export const insertTag = async (req: Request, res: Response) => {
 
 export const updateTag = async (req: Request, res: Response) => {
   try {
-    const { tagId } = req.params;
-    const { tagName, description }: Itag = req.body;
+    const { _id } = req.body;
+    const { name, description } = req.body;
 
     const updatedTag = await Tag.findByIdAndUpdate(
-      tagId,
-      { tagName, description },
+      _id,
+      { tagName: name, description },
       { new: true, runValidators: true }
     );
 

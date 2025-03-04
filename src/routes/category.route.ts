@@ -23,9 +23,9 @@ router.post(
 );
 
 router.put(
-  "/update/:categoryId",
+  "/update",
   [
-    param("categoryId").notEmpty().withMessage("categoryId is required"),
+    body("_id").notEmpty().withMessage("categoryId is required"),
     validateBody,
     authorize(["admin", "user"]),
   ],

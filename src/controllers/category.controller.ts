@@ -26,12 +26,12 @@ export const insertCategory = async (req: Request, res: Response) => {
 
 export const updateCategory = async (req: Request, res: Response) => {
   try {
-    const { categoryId } = req.params;
-    const { categoryName, description }: ICategory = req.body;
+    const { _id } = req.body;
+    const { name, description } = req.body;
 
     const updatedCategory = await Category.findByIdAndUpdate(
-      categoryId,
-      { categoryName, description },
+      _id,
+      { categoryName: name, description },
       { new: true, runValidators: true }
     );
 

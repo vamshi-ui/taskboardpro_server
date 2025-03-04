@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verified</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #4caf50, #81c784);
+      }
+      .container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+      }
+      h1 {
+        color: #388e3c;
+      }
+      p {
+        color: #555;
+        font-size: 1.1em;
+      }
+      .countdown {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #2e7d32;
+      }
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        color: #fff;
+        background: #4caf50;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+      }
+      a:hover {
+        background: #388e3c;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Email Verified Successfully! ✅</h1>
+      <p>
+        You will be redirected to the login page in
+        <span id="countdown" class="countdown">10</span> seconds...
+      </p>
+      <a href="<%= loginUrl %>">Click here if you are not redirected</a>
+    </div>
+
+    <script>
+      let countdown = 10;
+      const countdownElement = document.getElementById("countdown");
+
+      const timer = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+
+        if (countdown <= 0) {
+          clearInterval(timer);
+          window.location.href = "<%= loginUrl %>";
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
