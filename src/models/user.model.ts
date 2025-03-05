@@ -75,6 +75,7 @@ userSchema.methods.generateJWT = function () {
       userName: this.userName,
       joinedDate: this.createdAt,
       isEmailVerified: this.isEmailVerified,
+      isActive: this.isActive,
     },
     process.env.JWT_SECRET!
   );

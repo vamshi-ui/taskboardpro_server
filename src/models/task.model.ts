@@ -14,12 +14,14 @@ export interface ITask extends Document {
 export interface ICategory extends Document {
   categoryName: string;
   description: string;
+  globalFlag: boolean;
   userId: mongoose.Schema.Types.ObjectId;
 }
 
 export interface Itag extends Document {
   tagName: string;
   description: string;
+  globalFlag: boolean;
   userId: mongoose.Schema.Types.ObjectId;
 }
 
@@ -82,6 +84,10 @@ const categorySchema: Schema<ICategory> = new Schema<ICategory>(
       required: true,
       ref: "User",
     },
+    globalFlag: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
@@ -102,6 +108,10 @@ const tagSchema: Schema<Itag> = new Schema<Itag>(
       required: true,
       ref: "User",
     },
+    globalFlag: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

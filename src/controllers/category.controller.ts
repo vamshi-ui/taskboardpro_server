@@ -26,8 +26,19 @@ export const insertCategory = async (req: Request, res: Response) => {
 
 export const updateCategory = async (req: Request, res: Response) => {
   try {
-    const { _id } = req.body;
-    const { name, description } = req.body;
+    const { _id, name, description } = req.body;
+
+    const category = await Category.findById(_id);
+
+    if (!category) {
+      res.status(404).json({ message: "Category not found" });
+      return;
+    }
+
+    if (category.globalFlag) {
+      res.status(403).json({ message: "Cannot update a global category" });
+      return;
+    }
 
     const updatedCategory = await Category.findByIdAndUpdate(
       _id,
@@ -35,18 +46,13 @@ export const updateCategory = async (req: Request, res: Response) => {
       { new: true, runValidators: true }
     );
 
-    if (!updatedCategory) {
-      res.status(404).json({ message: "Category not found" });
-      return;
-    }
-
     res.status(200).json({
       message: "Category updated successfully",
       result: updatedCategory,
     });
   } catch (err: any) {
     console.log(err.message);
-    res.status(500).json({ message: err.message || "internal server error" });
+    res.status(500).json({ message: err.message || "Internal server error" });
   }
 };
 
@@ -54,14 +60,26 @@ export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const { categoryId } = req.params;
 
-    const deletedCategory = await Category.findByIdAndDelete(categoryId);
+    const category = await Category.findById(categoryId);
 
-    if (!deletedCategory) {
+    if (!category) {
       res.status(404).json({ message: "Category not found" });
       return;
     }
 
-    res.status(200).json({ message: "Category deleted successfully" });
+    if (category.globalFlag) {
+      res.status(403).json({ message: "Cannot delete a global category" });
+      return;
+    }
+
+    const deletedCategory = await Category.findByIdAndDelete(categoryId);
+
+    res
+      .status(200)
+      .json({
+        message: "Category deleted successfully",
+        result: deletedCategory,
+      });
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({ message: err.message || "internal server error" });
@@ -72,7 +90,9 @@ export const getAllCategories = async (req: Request, res: Response) => {
   try {
     const { limit, offset }: any = req.body;
 
-    const query = Category.find({ userId: req.user.id })
+    const query = Category.find({
+      $or: [{ userId: req.user.id }, { globalFlag: true }],
+    })
       .sort({ createdAt: -1 })
       .skip(offset ? parseInt(offset) : 0);
 
@@ -82,7 +102,9 @@ export const getAllCategories = async (req: Request, res: Response) => {
 
     const [categoryList, totalRecords] = await Promise.all([
       query,
-      Category.countDocuments({ userId: req.user.id }),
+      Category.countDocuments({
+        $or: [{ userId: req.user.id }, { globalFlag: true }],
+      }),
     ]);
 
     res.status(200).json({
@@ -91,7 +113,6 @@ export const getAllCategories = async (req: Request, res: Response) => {
       totalRecords,
       offset: +offset,
     });
-
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({ message: err.message || "internal server error" });
