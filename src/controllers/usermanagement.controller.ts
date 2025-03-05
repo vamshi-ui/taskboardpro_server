@@ -21,7 +21,7 @@ export const insertUser = async (req: Request, res: Response) => {
         }
       );
 
-      const verificationLink = `http://localhost:4444/api/auth/verify-email/${newToken}`;
+      const verificationLink = `${process.env.CLIENT_URL}/api/auth/verify-email/${newToken}`;
       await sendEmail(
         emailId,
         "Verify Your Email Address",
@@ -59,7 +59,7 @@ export const insertUser = async (req: Request, res: Response) => {
     await token.save();
 
     // Send verification email
-    const verificationLink = `http://localhost:4444/api/auth/verify-email/${verificationToken}`;
+    const verificationLink = `${process.env.CLIENT_URL}/api/auth/verify-email/${verificationToken}`;
     await sendEmail(
       emailId,
       "Verify Your Email Address",
